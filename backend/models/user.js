@@ -10,3 +10,7 @@ export const createUser = asyncHandler(async (userData) => {
   const User = getDB().collection('users');
   return await User.insertOne(userData);
 })
+export const updateLastLogin = asyncHandler(async (id) => {
+  const User = getDB().collection('users');
+  return await User.updateOne({_id: id}, { $currentDate: { lastLogin: true}});
+})

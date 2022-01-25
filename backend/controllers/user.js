@@ -1,8 +1,40 @@
-import { verifyEmailAndPassword, hashPassword, generateJWToken } from '../utils/helpers.js';
+import { verifyEmailAndPassword, hashPassword, generateJWToken, verifyPassword } from '../utils/helpers.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import * as User from '../models/user.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
 const newUserParamsFilter = [ 'name', 'email', 'password' ];
+
+export const signin = asyncHandler( async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // find if the user exists
+  const user = await User.findUserByEmail(email);
+  // if user does not exist and not allowed to login throw an error
+  if(!user || !user.loginAllowed) {
+    throw new ErrorResponse("Authentication failed", 401);
+  }
+  
+  // compare if user provided password is correct
+  const compareResult = await verifyPassword(password, user.password)
+  // if password is wrong throw an error
+  if(!compareResult) {
+    throw new ErrorResponse("Authentication failed", 401);
+  }
+
+  // payload to generate the jsonwebtoken
+  const payload = {
+    id: user._id.toString(),
+    email: user.email,
+    role: user.role
+  }
+  // create the jwt
+  const token = await generateJWToken(payload);
+
+  // update user lastLogin field in the database
+  await User.updateLastLogin(user._id);
+
+  res.status(200).json({ message: 'signin successfully', ...payload, token})
+})
 
 export const signup = asyncHandler(async (req, res, next) => {
   // filter user sent data
@@ -32,6 +64,7 @@ export const signup = asyncHandler(async (req, res, next) => {
     },
     hash_token: null,
     expire_token: null,
+    request_expire: null,
     lastLogin: null,
     createdAt: new Date().toISOString(),
     updatedAt: null

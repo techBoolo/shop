@@ -14,6 +14,11 @@ export const verifyEmailAndPassword = ({email, password}) => {
 export const hashPassword = async (password) => {
   return await bcrypt.hash(password, +process.env.BCRYPT_SALT)
 }
+
+export const verifyPassword = async (password, hash) => {
+  return await bcrypt.compare(password, hash); 
+}
+
 export const generateJWToken = async (payload) => {
   return await jwt.sign(
     payload,

@@ -3,8 +3,8 @@ dotenv.config();
 
 import { MongoClient } from 'mongodb';
 
-//const url = process.env.MONGODB_ATLAS_URI;
-const url = process.env.MONGODB_LOCAL_URI;
+const url = process.env.MONGODB_ATLAS_URI;
+//const url = process.env.MONGODB_LOCAL_URI;
 const dbName = process.env.DB_NAME;
 
 const mongoClient = new MongoClient(url);
