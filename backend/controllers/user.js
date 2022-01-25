@@ -3,13 +3,30 @@ import {
   hashPassword, 
   generateJWToken, 
   verifyPassword,
-  getVerifyResetToken } from '../utils/helpers.js';
+  getVerifyResetToken,
+  hashVerifyResetToken } from '../utils/helpers.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import * as User from '../models/user.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
 import sendEmail from '../utils/sendEmail.js';
 
 const newUserParamsFilter = [ 'name', 'email', 'password' ];
+
+export const verifyEmail = asyncHandler( async (req, res, next) => {
+  // hash the user sent VRToken, i.e the VRToken found in the url verification
+  const VRTokenHash = hashVerifyResetToken(req.params.VRToken);
+
+  // find the user who owns the VRTokenHash
+  const user = await User.findUserByVRTokenHash(VRTokenHash)
+  if(!user) {
+    throw new ErrorResponse('invalid token', 400);
+  }
+
+  // the hash matches so the email is correct and set email verified true
+  const result = await User.updateUserEmailVerification(user._id);
+
+  res.status(200).json({ message: 'email verification completed.'})
+})
 
 export const signin = asyncHandler( async (req, res, next) => {
   const { email, password } = req.body;

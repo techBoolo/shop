@@ -41,3 +41,8 @@ export const getVerifyResetToken = () => {
   return { VRToken, VRTokenHash, VRTokenExpire }
 }
 
+export const hashVerifyResetToken = (VRToken) => {
+  const VRTokenHash = crypto.createHash('sha256').update(VRToken).digest('hex');
+  return VRTokenHash;
+}
+

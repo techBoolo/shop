@@ -24,3 +24,16 @@ export const updateUserVerifyResetToken = asyncHandler( async (id, token) => {
     { $set: { verify_reset_token_hash: VRTokenHash, verify_reset_token_expire: VRTokenExpire}}
   )
 })
+export const findUserByVRTokenHash = asyncHandler( async (VRTokenHash) => {
+  const User = getDB().collection('users');
+  return await User.findOne({
+    verify_reset_token_hash: VRTokenHash,
+    verify_reset_token_expire: { $gt: Date.now() }
+  })
+})
+
+export const updateUserEmailVerification = asyncHandler( async (id) => {
+  const User = getDB().collection('users');
+  await User.updateOne({ _id: id}, { $set: { 'verified.email': true}})
+  return await updateUserVerifyResetToken(id, { VRTokenHash: undefined , VRTokenExpire: undefined})
+})
