@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import ErrorResponse from './errorResponse.js';
 const email_regex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
@@ -32,3 +33,11 @@ export const generateJWToken = async (payload) => {
     }
   )
 }
+
+export const getVerifyResetToken = () => {
+  const VRToken = crypto.randomBytes(20).toString('hex');
+  const VRTokenHash = crypto.createHash('sha256').update(VRToken).digest('hex');
+  const VRTokenExpire = Date.now() * 1000 * 60 * 60 * 6  // 12 hours to verify the email
+  return { VRToken, VRTokenHash, VRTokenExpire }
+}
+

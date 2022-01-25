@@ -26,4 +26,7 @@ yarn-error.log*
 
 *.swp
 *.swa
-/request
+
+request
+request/
+
