@@ -1,10 +1,13 @@
 import './App.css';
+import Router from './router.js';
+import Navbar from './components/navbar.js';
 
 function App() {
   return (
-    <div>
-      it works
-    </div>
+    <>
+      <Navbar />
+      <Router />
+    </>
   );
 }
 
