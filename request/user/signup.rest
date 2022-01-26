@@ -3,7 +3,7 @@ http://localhost:3001/users
 POST /signup
 
 {
-  "name": "user",
-  "email": "user@email.com",
+  "name": "admin",
+  "email": "boo.events.org@gmail.com",
   "password": "password"
 }

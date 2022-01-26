@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import logger from 'morgan';
+import cors from 'cors';
 import { dbConnect, getDB } from './config/db.js';
 import errorHandler from './middlewares/errorHandler.js';
 import ErrorResponse from './utils/errorResponse.js';
@@ -12,6 +13,7 @@ const app = express();
 
 // middlewares
 app.use(logger('dev'));
+app.use(cors());
 app.use(express.json());
 
 // routes

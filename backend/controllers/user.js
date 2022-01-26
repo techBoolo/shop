@@ -133,9 +133,9 @@ export const signup = asyncHandler(async (req, res, next) => {
   // in the frontend show what to do next in a page( to go to their email address and click the link
   res.status(201).json({ 
     message: 'Signup successfully' ,
-    id: user._id,
-    email: user.email,
-    role: user.role,
-    verified: user.verified
+//    id: user._id,
+ //   email: user.email,
+  //  role: user.role,
+   // verified: user.verified
   })
 })
