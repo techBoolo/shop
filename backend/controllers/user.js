@@ -4,7 +4,8 @@ import {
   generateJWToken, 
   verifyPassword,
   getVerifyResetToken,
-  hashVerifyResetToken } from '../utils/helpers.js';
+  hashVerifyResetToken,
+  captchaValidation } from '../utils/helpers.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import * as User from '../models/user.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
@@ -62,7 +63,18 @@ export const signin = asyncHandler( async (req, res, next) => {
 })
 
 export const signup = asyncHandler(async (req, res, next) => {
-  // filter user sent data
+
+  // get the captcha token sent from the signup form fron the front end
+  const { captchaToken } = req.body;
+  // validate the token 
+  const captchResponse =  await captchaValidation(captchaToken);
+  // if response from google.com/captcha is true, proceed otherwise throw an error
+  const human = captchResponse.success;
+  if(!human) {
+    throw new ErrorResponse('Invalid request, Bot', 400);
+  }
+
+  // after captcha is verified filter user sent data
   const userData = JSON.parse(JSON.stringify(req.body, newUserParamsFilter));
 
   // check if both email and password exists and satisfy the requirements

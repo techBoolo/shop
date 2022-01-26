@@ -1,10 +1,12 @@
 import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 import ErrorResponse from './errorResponse.js';
 const email_regex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
 
-
+dotenv.config();
 // password must exist and should be greater than 3 characters
 // email must exist and satisfy the email regular expression
 export const verifyEmailAndPassword = ({email, password}) => {
@@ -46,3 +48,12 @@ export const hashVerifyResetToken = (VRToken) => {
   return VRTokenHash;
 }
 
+export const captchaValidation = async (captchaToken) => {
+   const data = JSON.parse(JSON.stringify({ "secret": `${process.env.RECAPTCHA_SECRET_KEY}`, 
+      "response": `${captchaToken}`
+    })) 
+  const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`)
+  
+  return response.data
+}
