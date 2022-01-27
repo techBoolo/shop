@@ -30,12 +30,19 @@ export const verifyEmail = asyncHandler( async (req, res, next) => {
 })
 
 export const signin = asyncHandler( async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, captchaToken } = req.body;
+
+  const captcha = await captchaValidation(captchaToken);
+  const human = captcha.success;
+  if(!human) {
+    throw new ErrorResponse("Invalid request", 400);
+  }
 
   // find if the user exists
   const user = await User.findUserByEmail(email);
   // if user does not exist and not allowed to login throw an error
   if(!user || !user.login_allowed || !user.verified.email) {
+    console.log(`${email} => user does not exist or not allowed to login or email is not verified`)
     throw new ErrorResponse("Authentication failed", 401);
   }
   
@@ -43,6 +50,7 @@ export const signin = asyncHandler( async (req, res, next) => {
   const compareResult = await verifyPassword(password, user.password)
   // if password is wrong throw an error
   if(!compareResult) {
+    console.log(`${ email } => password does not match`)
     throw new ErrorResponse("Authentication failed", 401);
   }
 

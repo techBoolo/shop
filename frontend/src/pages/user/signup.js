@@ -10,7 +10,6 @@ import errorMessage from '../../utils/errorMessage';
 
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
@@ -33,7 +32,7 @@ const Signup = (props) => {
     recaptchaRef.current.reset();
 
     const signupData = {
-      name, email, password,captchaToken
+      name, email, password, captchaToken
     }
     try {
       const { data } = await userAPI.signup(signupData) 
