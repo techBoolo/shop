@@ -5,13 +5,48 @@ import {
   verifyPassword,
   getVerifyResetToken,
   hashVerifyResetToken,
-  captchaValidation } from '../utils/helpers.js';
+  captchaValidation,
+  sendEmailToUser } from '../utils/helpers.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import * as User from '../models/user.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
 import sendEmail from '../utils/sendEmail.js';
 
 const newUserParamsFilter = [ 'name', 'email', 'password' ];
+
+export const resetPassword = asyncHandler( async (req, res, next) => {
+
+  res.status(200).json({ message: 'password reset success'})
+})
+
+export const forgotPassword = asyncHandler( async (req, res, next) => {
+  const { email, captchaToken } = req.body;
+
+  const captcha = await captchaValidation(captchaToken);
+  const human = captcha.success;
+  if(!human) {
+    console.log('captcha error, Bot')
+    throw new ErrorResponse('invalid token', 400)
+  }
+
+  const user = await User.findUserByEmail(email);
+  if(!user || !user.verified.email) {
+    console.log(`${email} reset request is failed, it does not exist in the database, or non verified email `)
+    throw new ErrorResponse('Email not sent', 400)
+  }
+   
+  const url = 'reset-password';
+  const subject = 'Reset password';
+  const message = `
+    <h1>Reset password</h1>
+    <p>Please click the following link to reset your password</p>
+  `; 
+  await sendEmailToUser({ user, url, subject, message })
+
+  res.status(200).json({
+    message: 'reset email sent'
+  })
+})
 
 export const verifyEmail = asyncHandler( async (req, res, next) => {
   // hash the user sent VRToken, i.e the VRToken found in the url verification
@@ -124,6 +159,8 @@ export const signup = asyncHandler(async (req, res, next) => {
   if(!user){
     throw new ErrorResponse('email can not send', 404);
   }
+  
+  // we can use the method sendEmailToUser in the helper module incase
   // get verification and reset password token
   const verifyResetToken = getVerifyResetToken();
 

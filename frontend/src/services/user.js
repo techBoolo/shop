@@ -7,3 +7,7 @@ export const signup = async (signupData) => {
 export const signin = async (signinData) => {
   return await axios.post('/users/signin', signinData);
 }
+
+export const forgotpassword = async (resetData) => {
+  return await axios.post('/users/forgot-password', resetData)
+}
