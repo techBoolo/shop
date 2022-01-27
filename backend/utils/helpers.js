@@ -17,6 +17,12 @@ export const verifyEmailAndPassword = ({email, password}) => {
     throw new ErrorResponse('signup error, invalid email/password', 400)
   }
 }
+export const validatePassword = (password) => {
+  password = password.trim();
+  if(!password || password.length < 3) {
+    throw new ErrorResponse('password reset error, invalid password', 400)
+  }
+}
 
 // hash the user provided password to save it in the database
 export const hashPassword = async (password) => {

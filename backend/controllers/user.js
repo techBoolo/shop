@@ -6,7 +6,8 @@ import {
   getVerifyResetToken,
   hashVerifyResetToken,
   captchaValidation,
-  sendEmailToUser } from '../utils/helpers.js';
+  sendEmailToUser, 
+  validatePassword} from '../utils/helpers.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import * as User from '../models/user.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
@@ -16,6 +17,15 @@ const newUserParamsFilter = [ 'name', 'email', 'password' ];
 
 export const resetPassword = asyncHandler( async (req, res, next) => {
 
+  const { VRToken, password } = req.body;
+  const VRTokenHash = hashVerifyResetToken(VRToken);
+  const user = await User.findUserByVRTokenHash(VRTokenHash);
+  if(!user) {
+    throw new ErrorResponse('invalid reset token', 400)
+  }
+
+  validatePassword(password);
+  await User.resetPassword(user._id, password);
   res.status(200).json({ message: 'password reset success'})
 })
 

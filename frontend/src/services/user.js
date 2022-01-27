@@ -11,3 +11,7 @@ export const signin = async (signinData) => {
 export const forgotpassword = async (resetData) => {
   return await axios.post('/users/forgot-password', resetData)
 }
+
+export const resetPassword = async ({ VRToken, password}) => {
+  return await axios.put('/users/reset-password', { VRToken, password }) 
+}

@@ -7,6 +7,6 @@ router.post('/signup', userController.signup);
 router.post('/signin', userController.signin);
 router.put('/verifyemail/:VRToken', userController.verifyEmail);
 router.post('/forgot-password', userController.forgotPassword);
-router.put('/reset-password/:VRToken', userController.resetPassword);
+router.put('/reset-password/', userController.resetPassword);
 
 export default router;
