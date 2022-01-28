@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/reducers/userSlice.js';
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -26,9 +27,12 @@ const Navbar = (props) => {
   const [ openDrawer, setOpenDrawer ] = useState(false)
 
   const { currentUser } = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-
+    dispatch(logout());
+    navigate('/');
   }
   const menuList = () => (
     <Box
