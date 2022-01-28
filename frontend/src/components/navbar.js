@@ -13,6 +13,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
 
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -78,10 +79,14 @@ const Navbar = (props) => {
             <Typography component='h2' variant='h6' sx={{ color: '#f4f4f4'}}>Shop</Typography>
           </Link>
 
-          { !currentUser && 
-            (<Link component={RouterLink} to='/users/signin' sx={{ textDecoration: 'none' }}>
-              <Typography component='h2' variant='body1' sx={{ color: '#f4f4f4', mr: 2}}>Signin</Typography>
-            </Link>)
+          { currentUser
+            ? (<Link component={RouterLink} to={`/users/${currentUser.id}`}>
+                <Avatar alt={currentUser?.name} src='' sx={{ width: 30, height: 30 }} />
+              </Link>)
+
+            : (<Link component={RouterLink} to='/users/signin' sx={{ textDecoration: 'none' }}>
+                <Typography component='h2' variant='body1' sx={{ color: '#f4f4f4', mr: 2}}>Signin</Typography>
+              </Link>)
           }
 
           <IconButton onClick={() => setOpenDrawer(true)} sx={{  color: '#f4f4f4', ml: 2}} >
