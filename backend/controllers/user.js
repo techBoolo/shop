@@ -17,7 +17,15 @@ const newUserParamsFilter = [ 'name', 'email', 'password' ];
 
 export const resetPassword = asyncHandler( async (req, res, next) => {
 
-  const { VRToken, password } = req.body;
+  const { VRToken, password, captchaToken } = req.body;
+
+  const captcha = await captchaValidation(captchaToken);
+  const human = captcha.success;
+  if(!human) {
+    console.log('captcha error, Bot')
+    throw new ErrorResponse('invalid token', 400)
+  }
+
   const VRTokenHash = hashVerifyResetToken(VRToken);
   const user = await User.findUserByVRTokenHash(VRTokenHash);
   if(!user) {
