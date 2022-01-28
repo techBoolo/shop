@@ -42,6 +42,7 @@ const Signin = (props) => {
     }
   }, [rememberMe, currentUser])
 
+  // redirect if user already loggedin, even when refreshing the url by hand
   if(currentUser) {
     return (
       <Navigate to='/' replace state={{ state:  location.pathname}}/>
