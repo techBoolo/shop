@@ -32,11 +32,12 @@ const Signin = (props) => {
     const signinData = {
       email, password, rememberMe, captchaToken
     }
+    setPassword('');
     dispatch(signin(signinData));
   }
 
   useEffect(() => {
-    if(rememberMe) {
+    if(rememberMe && currentUser) {
       window.localStorage.setItem('currentUser', JSON.stringify(currentUser));
     }
   }, [rememberMe, currentUser])

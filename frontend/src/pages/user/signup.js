@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { Link as RouterLink, useNavigate }  from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Link as RouterLink, useNavigate, Navigate }  from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import dotenv from 'dotenv';
 import ReCaptcha from 'react-google-recaptcha';
 import * as userAPI from '../../services/user.js';
@@ -23,6 +23,7 @@ const Signup = (props) => {
   const [password, setPassword ] = useState('');
   const recaptchaRef = useRef();
 
+  const { currentUser } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
@@ -36,6 +37,7 @@ const Signup = (props) => {
     }
     try {
       const { data } = await userAPI.signup(signupData) 
+      setPassword('');
       dispatch(notify({ message: data.message, _status: 'success' }))
       navigate('/users/signup-success');
     } catch (error) {
@@ -44,6 +46,11 @@ const Signup = (props) => {
     }
   }
 
+  if(currentUser) {
+    return (
+      <Navigate to='/' />
+    )
+  }
   return (
     <Container maxWidth='xs'>
       <Paper elevation={3} sx={{mt: 10, p: 3, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
